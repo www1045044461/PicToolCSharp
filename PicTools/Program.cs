@@ -115,19 +115,21 @@ namespace PicTools
                 }
                 else
                 {
-                    for (int i = 0; i < natives.Length; i++)
-                    {
-                        File.Move(natives[i], news[i]);    //先总体便宜然后补充到前面
-                        Console.WriteLine($"{natives[i]}==>{news[i]}");
-                    }
+                    //for (int i = 0; i < natives.Length; i++)
+                    //{
+                    //    File.Move(natives[i], news[i]);    //先总体便宜然后补充到前面
+                    //    Console.WriteLine($"{natives[i]}==>{news[i]}");
+                    //}
                 }
 
                 Console.WriteLine("===============================");
                 //再将最后超出的offset设置到最前面
                 for(int i=natives.Length-offset;i<natives.Length;i++)
                 {
-                    File.Move(news[i], natives[natives.Length - i]);
-                    Console.WriteLine($"{news[i]}==>{natives[natives.Length-i]}");
+                   
+                    int native_map_index = (i + offset) % natives.Length;
+                    File.Move(news[i], natives[native_map_index]);
+                    Console.WriteLine($"{news[i]}==>{natives[native_map_index]}");
                 }
             }
 
