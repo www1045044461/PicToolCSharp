@@ -21,17 +21,19 @@ namespace PicTools
 
             string[] natives_jpg = Directory.GetFiles(path, "*.jpg");
             string[] native_png = Directory.GetFiles(path, "*.png");
-            string[] natives = new string[natives_jpg.Length + native_png.Length];
+            string[] native_gif= Directory.GetFiles(path, "*.gif");
+            string[] natives = new string[natives_jpg.Length + native_png.Length + native_gif.Length];
 
             natives_jpg.CopyTo(natives, 0);
             native_png.CopyTo(natives, natives_jpg.Length);
+            native_png.CopyTo(natives, natives_jpg.Length + native_png.Length);
 
             Array.Sort(natives);
 
 
             Console.WriteLine($"Input Name Pattern:");
-            string pattern = $"\\d*.(jpg|png)";
-            string pattern2 = $"\\d*_*.(jpg|png)";
+            string pattern = $"\\d*.(jpg|png|gif)";
+            string pattern2 = $"\\d*_*.(jpg|png|gif)";
 
             Regex regex = new Regex(pattern);
             Regex regex2 = new Regex(pattern2);
@@ -96,11 +98,18 @@ namespace PicTools
 
             if (method == 1)
             {
-                Parallel.For(0, news.Length, (a) =>
+                for (int a = 0; a < natives.Length; a++)
                 {
-                    File.Move(natives[a], news[a]);
+                    try
+                    {
+                        File.Move(natives[a], news[a]);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"[Error]:{natives[a]} ==> {news[a]}");
+                    }
                     Console.WriteLine($"{natives[a]}==>{news[a]}");
-                });
+                }
             }
             else if (method == 2)
             {
