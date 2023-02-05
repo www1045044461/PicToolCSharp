@@ -5,7 +5,13 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicTools", "PicTools\PicTools.csproj", "{1B51AA38-6234-450C-B47D-09F2D9633BC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IncreaseName", "IncreaseName\IncreaseName.csproj", "{3E8FFA1C-7DAB-4816-B766-0CFFD64991BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IncreaseName", "IncreaseName\IncreaseName.csproj", "{3E8FFA1C-7DAB-4816-B766-0CFFD64991BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormatName", "FormatName\FormatName.csproj", "{C3717A56-6612-4640-9A58-FD42C63C23F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveFirst", "RemoveFirst\RemoveFirst.csproj", "{C47AEC64-CF0B-45B0-B408-F4A12CF22564}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CycleMove", "CycleMove\CycleMove.csproj", "{BE2A2BC7-16ED-4ABD-9794-91CA981CDCC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{3E8FFA1C-7DAB-4816-B766-0CFFD64991BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E8FFA1C-7DAB-4816-B766-0CFFD64991BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E8FFA1C-7DAB-4816-B766-0CFFD64991BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3717A56-6612-4640-9A58-FD42C63C23F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3717A56-6612-4640-9A58-FD42C63C23F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3717A56-6612-4640-9A58-FD42C63C23F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3717A56-6612-4640-9A58-FD42C63C23F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C47AEC64-CF0B-45B0-B408-F4A12CF22564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C47AEC64-CF0B-45B0-B408-F4A12CF22564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C47AEC64-CF0B-45B0-B408-F4A12CF22564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C47AEC64-CF0B-45B0-B408-F4A12CF22564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE2A2BC7-16ED-4ABD-9794-91CA981CDCC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE2A2BC7-16ED-4ABD-9794-91CA981CDCC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2A2BC7-16ED-4ABD-9794-91CA981CDCC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE2A2BC7-16ED-4ABD-9794-91CA981CDCC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

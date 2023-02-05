@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "IncreaseName": {
+      "commandName": "Project",
+      "commandLineArgs": "2 66 0",
+      "workingDirectory": "C:\\Users\\sunzh\\Downloads\\新建文件夹1"
+    }
+  }
+}

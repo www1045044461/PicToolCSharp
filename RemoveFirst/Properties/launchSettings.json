@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RemoveFirst": {
+      "commandName": "Project",
+      "commandLineArgs": "2 C:\\Users\\sunzh\\Downloads\\新建文件夹1 0"
+    }
+  }
+}

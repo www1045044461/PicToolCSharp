@@ -21,6 +21,38 @@ namespace IncreaseName
         }
     }
 
+    public class ICMPNameAdd : IComparer<FileInfo>
+    {
+        public static int GetId(string name)
+        {
+            bool is_format1 = name.Contains('_');
+
+            int t1 = -1;
+            int t2 = -1;
+            string _name = null;
+            int id = -1;
+            if(is_format1)
+            {
+                t1 = name.LastIndexOf('_');
+                t2 = name.LastIndexOf('.');
+                _name = name.Substring(t1 + 1, t2 - t1 - 1);
+                id = Convert.ToInt32(_name);
+            }
+            else
+            {
+                id = Convert.ToInt32(name);
+            }
+            return id;
+
+        }
+        public int Compare([AllowNull] FileInfo x, [AllowNull] FileInfo y)
+        {
+            int t1 = GetId(x.Name);
+            int t2 = GetId(y.Name);
+            return t1 >= t2 ? 1:-1;
+        }
+    }
+
     internal class Program
     {
         static void Main(string[] args)
@@ -60,9 +92,12 @@ namespace IncreaseName
             if (mode == 0)
             {
                 files.Sort(new ICMPInc());
-            }else
+            }else if(mode == 1)
             {
                 files.Sort(new ICMPDec());
+            }else
+            {
+                files.Sort(new ICMPNameAdd());
             }
 
            for(int i=0;i<files.Count;i++)
