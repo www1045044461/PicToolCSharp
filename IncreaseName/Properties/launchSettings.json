@@ -2,7 +2,8 @@
   "profiles": {
     "IncreaseName": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\sunzh\\Downloads\\新建文件夹 (4)"
+      "commandLineArgs": "-E 3 0 0 2  196",
+      "workingDirectory": "C:\\Users\\sunzhimin777\\Downloads\\●PIXIV● Sutatenken [2675549] [AI Generated]"
     }
   }
 }

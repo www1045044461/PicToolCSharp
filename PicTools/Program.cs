@@ -26,7 +26,7 @@ namespace PicTools
 
             natives_jpg.CopyTo(natives, 0);
             native_png.CopyTo(natives, natives_jpg.Length);
-            native_png.CopyTo(natives, natives_jpg.Length + native_png.Length);
+            native_gif.CopyTo(natives, natives_jpg.Length + native_png.Length);
 
             Array.Sort(natives);
 

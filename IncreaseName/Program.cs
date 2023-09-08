@@ -2,86 +2,37 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
 
 namespace IncreaseName
 {
-    public class ICMPInc : IComparer<FileInfo>
-    {
-        public int Compare([AllowNull] FileInfo x, [AllowNull] FileInfo y)
-        {
-            return y.CreationTime.CompareTo(x.CreationTime);
-        }
-    }
-
-    public class ICMPDec : IComparer<FileInfo>
-    {
-        public int Compare([AllowNull] FileInfo x, [AllowNull] FileInfo y)
-        {
-            return x.CreationTime.CompareTo(y.CreationTime);
-        }
-    }
-
-    public class ICMPNameAdd : IComparer<FileInfo>
-    {
-        public static int GetId(string name)
-        {
-            bool is_format1 = name.Contains('_');
-
-            int t1 = -1;
-            int t2 = -1;
-            string _name = null;
-            int id = -1;
-            if(is_format1)
-            {
-                t1 = name.LastIndexOf('_');
-                t2 = name.LastIndexOf('.');
-                _name = name.Substring(t1 + 1, t2 - t1 - 1);
-                id = Convert.ToInt32(_name);
-            }
-            else
-            {
-                id = Convert.ToInt32(name);
-            }
-            return id;
-
-        }
-        public int Compare([AllowNull] FileInfo x, [AllowNull] FileInfo y)
-        {
-            int t1 = GetId(x.Name);
-            int t2 = GetId(y.Name);
-            return t1 >= t2 ? 1:-1;
-        }
-    }
 
     internal class Program
     {
         static void Main(string[] args)
         {
+            if(args.Length == 1 && args[0] == "--help")
+            {
+                Console.WriteLine($"将无序的文件首位排序: \n");
+                Console.WriteLine($"基础模式:exe [mode] [Dec/Inc] [i1StartIndex]");
+                Console.WriteLine($"exe 0 [i1SI] 按照创建日期递减排序");
+                Console.WriteLine($"exe 1 [i1SI] 按照创建日期递增排序");
+                Console.WriteLine($"exe 2 [i1SI] 按照最后_处的数字部分递增,字母部分忽略,没有递减");
+                Console.WriteLine($"exe -E [_分割数量n] [0文本整体自增/1文件整体自减/2按照2的模式自增] \n" +
+                    $"....[0/1/2]  [ilSI]");
+                return;
+            }
+
             string path = Directory.GetCurrentDirectory();
-
             Console.WriteLine(path);
-
-            int mode = Convert.ToInt32(args[0]);
-
-            int startindex = Convert.ToInt32(args[1]);
-
-            int rename = 0;
-
-            try
-            {
-                rename = Convert.ToInt32(args[2]);
-            }
-            catch (Exception e)
-            {
-                rename = 0;
-            }
+            string mode = args[0];
+            int startindex = -1;
 
             string[] nativenames = Directory.GetFiles(path);
             string[] outputs = new string[nativenames.Length];
-
             Console.WriteLine($"总共扫描到文件数:{nativenames.Length}");
 
-            List<FileInfo> files= new List<FileInfo>();
+            List<FileInfo> files = new List<FileInfo>();
 
             foreach (var item in nativenames)
             {
@@ -89,39 +40,77 @@ namespace IncreaseName
                 files.Add(new FileInfo(temp));
             }
 
-            if (mode == 0)
+            if (mode == "0")
             {
+                startindex = Convert.ToInt32(args[1]);
                 files.Sort(new ICMPInc());
-            }else if(mode == 1)
+            }
+            else if (mode == "1")
             {
                 files.Sort(new ICMPDec());
-            }else
+                startindex = Convert.ToInt32(args[1]);
+            }
+            else if(mode == "2")
             {
                 files.Sort(new ICMPNameAdd());
-            }
+                startindex = Convert.ToInt32(args[1]);
+            }else if(mode == "-E")
+            {
+                int levels = Convert.ToInt32(args[1]); //数量
 
-           for(int i=0;i<files.Count;i++)
-           {
-               int tih = startindex +i;
-               var  blcks  = files[i].FullName.Split("\\");
-               string temp1 = blcks[blcks.Length - 1];
-                if (rename == 0)
+                if(args.Length != levels+3)
                 {
-                    outputs[i] = $"{tih}_{temp1}";
-                }else
+                    Console.WriteLine($"错误等级数和参数对不上-->等级数:{levels} 参数数:{args.Length}");
+                    return ;
+                }
+
+                //检查文件名模式异常
+                foreach (var item in files)
                 {
-                    if (temp1.Contains(".jpg"))
+                    var sps = item.Name.Split("_");
+                    if(sps.Length != levels) 
                     {
-                        outputs[i] = $"{tih}.jpg";
-                    }else
-                    {
-                        outputs[i] = $"{tih}.png";
+                        Console.WriteLine($"错误文件{item.FullName}格式非法!");
+                        return;
                     }
                 }
-               Console.WriteLine($"从{files[i].FullName}===>{outputs[i]}");
-               files[i].CopyTo(outputs[i]);
-               files[i].Delete();
-           }
+
+                List<IComparer<String>> comparers = new List<IComparer<String>>();
+
+                //根据参数初始化比较器列表
+                for(int i=2;i<2+levels; i++)
+                {
+                    if (args[i] == "0")
+                    {
+                        comparers.Add(new NameAddComparerMethod0());
+                    }else if (args[i] == "1")
+                    {
+                        comparers.Add(new NameAddComparerMethod1());
+                    }else
+                    {
+                        comparers.Add(new NameAddComparerMethod2());
+                    }
+                }
+
+                IComparer<FileInfo> fcomparer = new MultiCompare(comparers);
+
+                //对文件进行排序
+                files.Sort(fcomparer);
+
+                //最后初始参数
+                startindex = Convert.ToInt32(args[args.Length - 1]);
+            }
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                int tih = startindex + i;
+                var blcks = files[i].FullName.Split(new char[2] { '\\', '\\' });
+                string temp1 = blcks[blcks.Length - 1];
+                outputs[i] = $"{FormatMethods.FormatFirstOrder(0+startindex,files.Count+startindex,tih)}_{temp1}";
+                Console.WriteLine($"从{files[i].FullName}===>{outputs[i]}");
+                files[i].CopyTo(outputs[i]);
+                files[i].Delete();
+            }
         }
     }
 }
