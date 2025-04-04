@@ -7,19 +7,28 @@ using System.Text;
 namespace IncreaseName
 {
 
+    /// <summary>
+    /// 操作
+    /// </summary>
+    enum Operation
+    {
+        /// <summary>
+        /// 递增
+        /// </summary>
+        Increase,
+        /// <summary>
+        /// 递减
+        /// </summary>
+        Decline
+    }
+
     internal class Program
     {
         static void Main(string[] args)
         {
             if(args.Length == 1 && args[0] == "--help")
             {
-                Console.WriteLine($"将无序的文件首位排序: \n");
-                Console.WriteLine($"基础模式:exe [mode] [Dec/Inc] [i1StartIndex]");
-                Console.WriteLine($"exe 0 [i1SI] 按照创建日期递减排序");
-                Console.WriteLine($"exe 1 [i1SI] 按照创建日期递增排序");
-                Console.WriteLine($"exe 2 [i1SI] 按照最后_处的数字部分递增,字母部分忽略,没有递减");
-                Console.WriteLine($"exe -E [_分割数量n] [0文本整体自增/1文件整体自减/2按照2的模式自增] \n" +
-                    $"....[0/1/2]  [ilSI]");
+                ShowHelp();
                 return;
             }
 
@@ -43,22 +52,23 @@ namespace IncreaseName
             if (mode == "0")
             {
                 startindex = Convert.ToInt32(args[1]);
-                files.Sort(new ICMPInc());
+                files.Sort(new CreateDateIncComparer());
             }
             else if (mode == "1")
             {
-                files.Sort(new ICMPDec());
+                files.Sort(new CreateDateDecComparer());
                 startindex = Convert.ToInt32(args[1]);
             }
-            else if(mode == "2")
+            else if (mode == "2")
             {
                 files.Sort(new ICMPNameAdd());
                 startindex = Convert.ToInt32(args[1]);
-            }else if(mode == "-E")
+            }
+            else if (mode == "-E")
             {
                 int levels = Convert.ToInt32(args[1]); //数量
 
-                if(args.Length != levels+3)
+                if (args.Length != levels + 3)
                 {
                     Console.WriteLine($"错误等级数和参数对不上-->等级数:{levels} 参数数:{args.Length}");
                     return ;
@@ -83,12 +93,22 @@ namespace IncreaseName
                     if (args[i] == "0")
                     {
                         comparers.Add(new NameAddComparerMethod0());
-                    }else if (args[i] == "1")
+                    }
+                    else if (args[i] == "1")
                     {
                         comparers.Add(new NameAddComparerMethod1());
-                    }else
+                    }
+                    else if (args[i] == "2")
                     {
                         comparers.Add(new NameAddComparerMethod2());
+                    }
+                    else if (args[i] == "3")
+                    {
+                        comparers.Add(new NameAddComparerMethod3());
+                    }
+                    else
+                    {
+
                     }
                 }
 
@@ -111,6 +131,28 @@ namespace IncreaseName
                 files[i].CopyTo(outputs[i]);
                 files[i].Delete();
             }
+        }
+
+        private static void ShowHelp()
+        {
+            Console.WriteLine($"将无序的文件首位排序: \n");
+            Console.WriteLine($"基础模式:exe [mode] [Dec/Inc] [i1StartIndex]");
+            Console.WriteLine($"exe 0 [i1SI] 按照创建日期递减排序");
+            Console.WriteLine($"exe 1 [i1SI] 按照创建日期递增排序");
+            Console.WriteLine($"exe 2 [i1SI] 按照最后_处的数字部分递增,字母部分忽略");
+            Console.WriteLine($"exe 3 [i1SI] 按照最后_处的数字部分递见");
+            Console.WriteLine($"exe -E [_分割数量n] [0文本整体自增/1文件整体自减/2按照2的模式自增/3] \n" +
+                $"....[0/1/2]  [ilSI]");
+        }
+
+        private static void ShowHelp1()
+        {
+            Console.WriteLine($"将无序的文件首位排序: \n");
+            Console.WriteLine($"基础模式:exe [mode] [Dec/Inc] [i1StartIndex]");
+            Console.WriteLine($"exe -t 0递减/1递增 [i1SI] 按照创建日期递减排序");
+            Console.WriteLine($"exe -n 0递增/1     [i1SI] -i  第几个下标序列 #按照最后_处的数字部分递增,字母部分忽略");
+            Console.WriteLine($"exe -E [_分割数量n] [0文本整体自增/1文件整体自减/2按照2的模式自增] \n" +
+                $"....[0/1/2]  [ilSI]");
         }
     }
 }
