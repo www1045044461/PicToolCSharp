@@ -2,8 +2,8 @@
   "profiles": {
     "IncreaseName": {
       "commandName": "Project",
-      "commandLineArgs": "-E 3 0 0 2  196",
-      "workingDirectory": "C:\\Users\\sunzhimin777\\Downloads\\●PIXIV● Sutatenken [2675549] [AI Generated]"
+      "commandLineArgs": "2 0001\r\n",
+      "workingDirectory": "H:\\RET\\CG\\{社保}[儒宅] [Primal Gym (カワセセイキ)] FGO+SAO角色LAC+明日方舟LAC\\[儒宅]\\新建文件夹\\新建文件夹"
     }
   }
 }

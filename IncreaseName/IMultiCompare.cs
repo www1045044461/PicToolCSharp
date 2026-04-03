@@ -53,4 +53,49 @@ namespace IncreaseName
 
         private List<IComparer<String>> _comparers = null;
     }
+
+    public class MultiCompareP : IComparer<PersonalFileInfo>
+    {
+        public int Compare(PersonalFileInfo x, PersonalFileInfo y)
+        {
+            string t1 = x.ComparedName;
+            string t2 = y.ComparedName;
+
+            var s1s = t1.Split('_');
+            var s2s = t2.Split('_');
+
+            if (s1s.Length != s2s.Length || s1s.Length != _comparers.Count)
+            {
+                throw new Exception($"比较等级和名字分割数量不一致:{s1s.Length}{s2s.Length}{_comparers.Count}");
+            }
+
+            int ret = 0;
+
+            for (int i = 0; i < s1s.Length; i++)
+            {
+                ret = _comparers[i].Compare(s1s[i], s2s[i]);
+                if (ret != 0)
+                {
+                    break;
+                }
+                else
+                {
+                    continue; //相等比教下一级
+                }
+            }
+
+            return ret;
+        }
+
+        public MultiCompareP(ICollection<IComparer<String>> comparers)
+        {
+            _comparers = new List<IComparer<string>>();
+            foreach (var comparer in comparers)
+            {
+                _comparers.Add(comparer);
+            }
+        }
+
+        private List<IComparer<String>> _comparers = null;
+    }
 }

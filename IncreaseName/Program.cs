@@ -41,27 +41,40 @@ namespace IncreaseName
             string[] outputs = new string[nativenames.Length];
             Console.WriteLine($"总共扫描到文件数:{nativenames.Length}");
 
-            List<FileInfo> files = new List<FileInfo>();
+            List<PersonalFileInfo> files = new List<PersonalFileInfo>();
 
-            foreach (var item in nativenames)
-            {
-                string temp = Path.Combine(path, item);
-                files.Add(new FileInfo(temp));
-            }
 
             if (mode == "0")
             {
+                foreach (var item in nativenames)
+                {
+                    string temp = Path.Combine(path, item);
+                    files.Add(new PersonalFileInfo(new FileInfo(temp)));
+                }
+
                 startindex = Convert.ToInt32(args[1]);
-                files.Sort(new CreateDateIncComparer());
+                files.Sort(new CreateDatePIncComparer());
             }
             else if (mode == "1")
             {
-                files.Sort(new CreateDateDecComparer());
+                foreach (var item in nativenames)
+                {
+                    string temp = Path.Combine(path, item);
+                    files.Add(new PersonalFileInfo(new FileInfo(temp)));
+                }
+
+                files.Sort(new CreateDatePDecComparer());
                 startindex = Convert.ToInt32(args[1]);
             }
             else if (mode == "2")
             {
-                files.Sort(new ICMPNameAdd());
+                foreach (var item in nativenames)
+                {
+                    string temp = Path.Combine(path, item);
+                    files.Add(new PersonalFileInfo(new FileInfo(temp)));
+                }
+
+                files.Sort(new ICMPNameAddP());
                 startindex = Convert.ToInt32(args[1]);
             }
             else if (mode == "-E")
@@ -74,13 +87,19 @@ namespace IncreaseName
                     return ;
                 }
 
+                foreach (var item in nativenames)
+                {
+                    string temp = Path.Combine(path, item);
+                    files.Add(new PersonalFileInfo(new FileInfo(temp),levels));
+                }
+
                 //检查文件名模式异常
                 foreach (var item in files)
                 {
-                    var sps = item.Name.Split("_");
+                    var sps = item.ComparedName.Split("_");
                     if(sps.Length != levels) 
                     {
-                        Console.WriteLine($"错误文件{item.FullName}格式非法!");
+                        Console.WriteLine($"错误文件{item.ComparedName}格式非法!");
                         return;
                     }
                 }
@@ -112,7 +131,7 @@ namespace IncreaseName
                     }
                 }
 
-                IComparer<FileInfo> fcomparer = new MultiCompare(comparers);
+                IComparer<PersonalFileInfo> fcomparer = new MultiCompareP(comparers);
 
                 //对文件进行排序
                 files.Sort(fcomparer);
@@ -124,12 +143,20 @@ namespace IncreaseName
             for (int i = 0; i < files.Count; i++)
             {
                 int tih = startindex + i;
-                var blcks = files[i].FullName.Split(new char[2] { '\\', '\\' });
+                var blcks = files[i].info.FullName.Split(new char[2] { '\\', '\\' });
                 string temp1 = blcks[blcks.Length - 1];
                 outputs[i] = $"{FormatMethods.FormatFirstOrder(0+startindex,files.Count+startindex,tih)}_{temp1}";
-                Console.WriteLine($"从{files[i].FullName}===>{outputs[i]}");
-                files[i].CopyTo(outputs[i]);
-                files[i].Delete();
+                Console.WriteLine($"从{files[i].info.FullName}===>{outputs[i]}");
+                try
+                {
+                    files[i].info.CopyTo(outputs[i]);
+                    files[i].info.Attributes = FileAttributes.Normal;
+                    files[i].info.Delete();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"异常{e.Message}==>{e.StackTrace}");
+                }
             }
         }
 
