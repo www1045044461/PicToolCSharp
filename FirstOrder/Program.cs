@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 
 namespace FirstOrder
 {
@@ -27,14 +28,39 @@ namespace FirstOrder
         public static int GetFirstOrderIndex(FileInfo x)
         {
             string str = x.Name;
-            int index1 = x.Name.IndexOf('_');
-            int value = Convert.ToInt32(str.Substring(0, index1));
-            return value;
+            if (x.Name.Contains('_'))
+            {
+                int index1 = x.Name.IndexOf('_');
+                int value = Convert.ToInt32(str.Substring(0, index1));
+                return value;
+            }
+            else 
+            {
+                try
+                {
+                    int index1 = x.Name.IndexOf('.');
+                    int value = Convert.ToInt32(str.Substring(0, index1));
+                    return value;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"文件名不是纯数字且没有数字index!");
+                    throw new Exception("文件名不是纯数字且没有数字index");
+                }
+            }
         }
 
         public static string CreateFileName(string file,int value)
         {
-            int v_ = file.IndexOf('_');
+            int v_ = -1;
+            if (file.Contains('_'))
+            {
+                v_ = file.IndexOf('_');
+            } else
+            {
+                v_ = file.IndexOf('.');
+            }
+
             string sub1 = file.Substring(0, v_);
             string sub2 = file.Substring(v_ , file.Length - v_);
             int vv = Convert.ToInt32(sub1);
@@ -90,7 +116,7 @@ namespace FirstOrder
                 }
             }
             string path = Directory.GetCurrentDirectory();
-            string[] nativenames = Directory.GetFiles(path);
+            string[] nativenames = Directory.GetFiles(path).Where(a=>!(a.EndsWith(".txt") || a.EndsWith(".json"))).ToArray();
             Console.WriteLine($"总共扫描到文件数:{nativenames.Length}");
             List<FileInfo> files = new List<FileInfo>();
             foreach (var item in nativenames)
